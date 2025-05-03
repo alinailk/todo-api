@@ -15,6 +15,14 @@ class TodoModel
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function createTodo($title): void
+    {
+
+        $sql = "INSERT INTO todos (title) VALUES (:title)";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['title' => $title]);
+    }
 }
 
 ?>

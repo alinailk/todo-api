@@ -3,14 +3,14 @@
 // Veritabanı bağlantı ayarları.
 
 $host = 'localhost';
-$dbname = 'todo-app';
+$dbname = 'todo_app';
 $username = 'root';
 $password = '';
 
 // PDO ile veritabanı bağlantısı
 
 try {
-    $pdo = new PDO("mysql:host=$host; dbname:$dbname; charset:utf8mb4", $username, $password);
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     // Bağlantı başarısız olduğunda mesaj döner.
