@@ -1,20 +1,16 @@
 <?php
 
-// Veritabanı bağlantısı ve model dosyasının dahil edilmesi.
+// Veritabanı bağlantısı ve model dosyasının dahil edilmesi
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../src/Models/TodoModel.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id = $_POST['id'] ?? null;
+// Silme işlemi
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
 
-    if ($id) {
-        $model = new TodoModel($pdo);
-        $model->deleteTodo($id);
-    }
+    $model = new TodoModel($pdo);
+    $model->deleteTodo($id);
 }
 
-// İşlem bitince anasayfaya yönlendir.
-header("Location: index.php");
+header('Location: index.php');
 exit;
-
-?>

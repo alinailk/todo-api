@@ -1,14 +1,32 @@
 <?php
 
-// Veritabanı bağlantısı için database.php dosyasını dahil et.
+// Veritabanı bağlantısı ve model dosyasının dahil edilmesi.
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../src/Models/TodoModel.php';
 
-// To do modelini başlat.
 $model = new TodoModel($pdo);
 
-// Tüm görevleri veritabanından çek.
+// Görev ekleme
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $title = $_POST['title'] ?? '';
+    $description = $_POST['description'] ?? '';
+    $dueDate = $_POST['due_date'] ?? null;
+
+    $model->createTodo($title, $description, $dueDate);
+    header('Location: index.php');
+    exit;
+}
+
+// Görevleri listeleme
 $todos = $model->getAllTodos();
+
+// Görev durumlarının veritabanındaki enum karşılıklarının ekranda doğru görünmesi için.
+$statusTranslations = [
+    'pending' => 'Bekliyor',
+    'in_progress' => 'Devam Ediyor',
+    'completed' => 'Tamamlandı',
+    'cancelled' => 'İptal Edildi'
+];
 
 ?>
 
@@ -17,50 +35,44 @@ $todos = $model->getAllTodos();
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo List</title>
+    <title>Görev Listesi</title>
 </head>
 
 <body>
-    <h1>Todo List</h1>
-    <!-- Yeni görev ekleme formu -->
-    <form action="store.php" method="post">
-        <input type="text" name="title" placeholder="Yeni görev ekle..." required>
-        <textarea name="description" placeholder="Görev açıklaması..."></textarea>
+    <h1>Yeni Görev Ekle</h1>
+    <form action="index.php" method="post">
+        <input type="text" name="title" placeholder="Görev Başlığı" required>
+        <textarea name="description" placeholder="Açıklama"></textarea>
+        <label for="due_date">Bitiş Tarihi:</label>
+        <input type="datetime-local" name="due_date">
         <button type="submit">Ekle</button>
     </form>
-    <!-- Görev listesi -->
+
+    <h2>Görevler</h2>
     <ul>
-        <?php foreach ($todos as $todo): ?>
+        <?php foreach ($todos as $todo):
+            $translatedStatus = $statusTranslations[$todo['status']] ?? $todo['status'];
+            ?>
         <li>
             <?php echo htmlspecialchars($todo['title']); ?>
-            <?php
-                $status = $todo['status'] === 'completed' ? 'Tamamlandı' : 'Bekliyor...';
-                echo " > " . $status;
-                ?>
-
-            <!-- Tamamlandı butonu -->
+            (<?php echo $translatedStatus; ?>)
+            -
+            Bitiş: <?php echo date('d.m.Y H:i', strtotime($todo['due_date'])); ?>
+            -
+            <a href="edit.php?id=<?php echo $todo['id']; ?>">Düzenle</a>
+            -
+            <a href="delete.php?id=<?php echo $todo['id']; ?>"
+                onclick="return confirm('Bu görevi silmek istediğinize emin misiniz?')">Sil</a>
+            -
             <?php if ($todo['status'] !== 'completed'): ?>
             <form action="update.php" method="POST" style="display:inline;">
                 <input type="hidden" name="id" value="<?php echo $todo['id']; ?>">
-                <input type="hidden" name="status" value="completed"> <!-- Status 'completed' olarak gönderiliyor -->
                 <button type="submit">Tamamlandı</button>
             </form>
             <?php endif; ?>
-
-            <!-- Silme butonu -->
-            <form action="delete.php" method="POST" style="display:inline;">
-                <input type="hidden" name="id" value="<?php echo $todo['id']; ?>">
-                <button type="submit" onclick="return confirm('Silmek istediğinize emin misiniz?')">Sil</button>
-            </form>
-
-            <!-- Düzenleme linki -->
-            <a href="edit.php?id=<?php echo $todo['id']; ?>">Düzenle</a>
         </li>
         <?php endforeach; ?>
-
     </ul>
-
 </body>
 
 </html>

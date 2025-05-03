@@ -18,14 +18,16 @@ class TodoModel
     }
 
     // To do ekleme fonksiyonu.
-    public function createTodo($title, $description): void
+    public function createTodo($title, $description, $dueDate = null)
     {
-        // Description'ı da veritabanına ekliyoruz
-        $sql = "INSERT INTO todos (title, description) VALUES (:title, :description)";
+        $sql = "INSERT INTO todos (title, description, due_date) VALUES (:title, :description, :due_date)";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['title' => $title, 'description' => $description]);
+        $stmt->execute([
+            'title' => $title,
+            'description' => $description,
+            'due_date' => $dueDate
+        ]);
     }
-
 
     // To do tamamlandı için fonksiyon.
     public function updateStatus($id, $status)
@@ -37,11 +39,12 @@ class TodoModel
         ]);
     }
 
+
     // To do silme fonksiyonu.
     public function deleteTodo($id)
     {
-        $stmt = $this->pdo->prepare("DELETE FROM todos WHERE id = ?");
-        return $stmt->execute([$id]);
+        $stmt = $this->pdo->prepare("UPDATE todos SET deleted_at = NOW() WHERE id = :id");
+        $stmt->execute(['id' => $id]);
     }
 
     public function getTodoById($id)
@@ -52,12 +55,24 @@ class TodoModel
     }
 
     // To do güncelleme fonksiyonu.
-    public function updateTodo($id, $title, $description): void
+    public function updateTodo($id, $title, $description, $dueDate)
     {
-        $sql = "UPDATE todos SET title = :title, description = :description WHERE id = :id";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['id' => $id, 'title' => $title, 'description' => $description]);
+        $stmt = $this->pdo->prepare("UPDATE todos SET title = :title, description = :description, due_date = :due_date WHERE id = :id");
+        $stmt->execute([
+            'title' => $title,
+            'description' => $description,
+            'due_date' => $dueDate,
+            'id' => $id
+        ]);
     }
+
+    // Silme işleminde tarihi tutar.
+    public function softDeleteTodo($id)
+    {
+        $stmt = $this->pdo->prepare("UPDATE todos SET deleted_at = NOW() WHERE id = :id");
+        $stmt->execute(['id' => $id]);
+    }
+
 }
 
 ?>
