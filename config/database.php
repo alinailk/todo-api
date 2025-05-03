@@ -1,18 +1,25 @@
 <?php
+class Database
+{
+    private static $pdo;
 
-// Veritabanı bağlantı ayarları.
-$host = 'localhost';
-$dbname = 'todo_app';
-$username = 'root';
-$password = '';
+    public static function connect()
+    {
+        if (!self::$pdo) {
+            $host = 'localhost';
+            $dbname = 'todo_app';
+            $username = 'root';
+            $password = '';
 
-// PDO ile veritabanı bağlantısı
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    // Bağlantı başarısız olduğunda ekrana mesaj döner.
-    die('Veritabanı bağlantısı başarısız.' . $e->getMessage());
+            try {
+                self::$pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+                self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch (PDOException $e) {
+                die('Veritabanı bağlantısı başarısız: ' . $e->getMessage());
+            }
+        }
+        return self::$pdo;
+    }
 }
 
 ?>

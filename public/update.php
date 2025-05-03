@@ -4,14 +4,25 @@
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../src/Models/TodoModel.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id = $_POST['id'] ?? null;
+// Veritabanı bağlantısını başlatıyoruz
+$pdo = Database::connect();
 
+// POST isteği geldiğinde çalışacak
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id = $_POST['id'] ?? null; // Görev ID'sini al
+
+    // Eğer ID geçerli ise
     if ($id) {
+        // TodoModel nesnesini oluşturuyoruz
         $model = new TodoModel($pdo);
-        $model->updateStatus($id, 'completed'); // Durumu 'completed' olarak güncelliyoruz
+
+        // Görev durumu güncelleniyor (başlık ve açıklama korunuyor)
+        $model->updateStatus($id, 'completed');
     }
 }
 
+// İşlem tamamlandığında index sayfasına yönlendir
 header('Location: index.php');
 exit;
+
+?>

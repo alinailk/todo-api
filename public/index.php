@@ -4,7 +4,9 @@
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../src/Models/TodoModel.php';
 
+$pdo = Database::connect();
 $model = new TodoModel($pdo);
+
 
 // Görev ekleme
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -53,24 +55,24 @@ $statusTranslations = [
         <?php foreach ($todos as $todo):
             $translatedStatus = $statusTranslations[$todo['status']] ?? $todo['status'];
             ?>
-        <li>
-            <?php echo htmlspecialchars($todo['title']); ?>
-            (<?php echo $translatedStatus; ?>)
-            -
-            Bitiş: <?php echo date('d.m.Y H:i', strtotime($todo['due_date'])); ?>
-            -
-            <a href="edit.php?id=<?php echo $todo['id']; ?>">Düzenle</a>
-            -
-            <a href="delete.php?id=<?php echo $todo['id']; ?>"
-                onclick="return confirm('Bu görevi silmek istediğinize emin misiniz?')">Sil</a>
-            -
-            <?php if ($todo['status'] !== 'completed'): ?>
-            <form action="update.php" method="POST" style="display:inline;">
-                <input type="hidden" name="id" value="<?php echo $todo['id']; ?>">
-                <button type="submit">Tamamlandı</button>
-            </form>
-            <?php endif; ?>
-        </li>
+            <li>
+                <?php echo htmlspecialchars($todo['title']); ?>
+                (<?php echo $translatedStatus; ?>)
+                -
+                Bitiş: <?php echo date('d.m.Y H:i', strtotime($todo['due_date'])); ?>
+                -
+                <a href="edit.php?id=<?php echo $todo['id']; ?>">Düzenle</a>
+                -
+                <a href="delete.php?id=<?php echo $todo['id']; ?>"
+                    onclick="return confirm('Bu görevi silmek istediğinize emin misiniz?')">Sil</a>
+                -
+                <?php if ($todo['status'] !== 'completed'): ?>
+                    <form action="update.php" method="POST" style="display:inline;">
+                        <input type="hidden" name="id" value="<?php echo $todo['id']; ?>">
+                        <button type="submit">Tamamlandı</button>
+                    </form>
+                <?php endif; ?>
+            </li>
         <?php endforeach; ?>
     </ul>
 </body>

@@ -7,7 +7,7 @@ require_once __DIR__ . '/../src/Models/TodoModel.php';
 $title = $_POST['title'] ?? '';  // Başlık
 $description = $_POST['description'] ?? '';  // Açıklama
 
-// Başlık ve açıklama verileri boş değilse kayıt yap
+// Başlık ve açıklama verileri boş değilse kayıt yapar.
 if (!empty($title)) {
     $model = new TodoModel($pdo);
     $model->createTodo($title, $description);
