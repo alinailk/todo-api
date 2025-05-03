@@ -32,30 +32,24 @@ $todos = $model->getAllTodos();
     <!-- Görev listesi -->
     <ul>
         <?php foreach ($todos as $todo): ?>
-        <li style="list-style-type: none;">
-            <?php echo htmlspecialchars($todo['title']); ?> -
+        <li>
+            <?php echo htmlspecialchars($todo['title']); ?>
             <?php
-                switch ($todo['status']) {
-                    case 'completed':
-                        echo 'Tamamlandı';
-                        break;
-                    case 'in_progress':
-                        echo 'Devam ediyor';
-                        break;
-                    case 'cancelled':
-                        echo 'İptal edildi';
-                        break;
-                    default:
-                        echo 'Bekliyor...';
-                }
+                $status = $todo['status'] === 'completed' ? 'Tamamlandı' : 'Bekliyor...';
+                echo " > " . $status;
                 ?>
-
+            <!-- Tamamlandı butonu -->
             <?php if ($todo['status'] !== 'completed'): ?>
-            <form action="update.php" method="post" style="display:inline;">
+            <form action="update.php" method="POST" style="display:inline;">
                 <input type="hidden" name="id" value="<?php echo $todo['id']; ?>">
-                <button type="submit">Tamamla</button>
+                <button type="submit">Tamamlandı</button>
             </form>
             <?php endif; ?>
+            <!-- Silme butonu -->
+            <form action="delete.php" method="POST" style="display:inline;">
+                <input type="hidden" name="id" value="<?php echo $todo['id']; ?>">
+                <button type="submit" onclick="return confirm('Silmek istediğinize emin misiniz?')">Sil</button>
+            </form>
         </li>
         <?php endforeach; ?>
     </ul>
