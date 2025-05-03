@@ -18,12 +18,14 @@ class TodoModel
     }
 
     // To do ekleme fonksiyonu.
-    public function createTodo($title): void
+    public function createTodo($title, $description): void
     {
-        $sql = "INSERT INTO todos (title) VALUES (:title)";
+        // Description'ı da veritabanına ekliyoruz
+        $sql = "INSERT INTO todos (title, description) VALUES (:title, :description)";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['title' => $title]);
+        $stmt->execute(['title' => $title, 'description' => $description]);
     }
+
 
     // To do tamamlandı için fonksiyon.
     public function updateStatus($id, $status)
@@ -40,6 +42,21 @@ class TodoModel
     {
         $stmt = $this->pdo->prepare("DELETE FROM todos WHERE id = ?");
         return $stmt->execute([$id]);
+    }
+
+    public function getTodoById($id)
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM todos WHERE id = :id");
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // To do güncelleme fonksiyonu.
+    public function updateTodo($id, $title, $description): void
+    {
+        $sql = "UPDATE todos SET title = :title, description = :description WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['id' => $id, 'title' => $title, 'description' => $description]);
     }
 }
 

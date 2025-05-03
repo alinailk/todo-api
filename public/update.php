@@ -5,12 +5,14 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../src/Models/TodoModel.php';
 
 $id = $_POST['id'] ?? null;
+$status = $_POST['status'] ?? null;
 
-if ($id) {
+if ($id && $status) {
     $model = new TodoModel($pdo);
-    $model->updateStatus($id, 'completed');
+    $model->updateStatus($id, $status);  // Status'u update et
 }
 
-// İşlem bitince anasayfaya yönlendir.
 header("Location: index.php");
 exit;
+
+?>

@@ -4,16 +4,15 @@
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../src/Models/TodoModel.php';
 
-// Formdan gelen başlık verisini al.
-$title = $_POST['title'] ?? '';
+$title = $_POST['title'] ?? '';  // Başlık
+$description = $_POST['description'] ?? '';  // Açıklama
 
-// Başlık verisi boş değilse kayıt yap.
+// Başlık ve açıklama verileri boş değilse kayıt yap
 if (!empty($title)) {
     $model = new TodoModel($pdo);
-    $model->createTodo($title); // Veritabanına ekler.
+    $model->createTodo($title, $description);
 }
 
-// İşlem bitince anasayfaya yönlendir.
 header("Location: index.php");
 exit;
 
