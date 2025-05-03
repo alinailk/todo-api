@@ -29,19 +29,37 @@ $todos = $model->getAllTodos();
         <input type="text" name="title" placeholder="Yeni görev ekle..." required>
         <button type="submit">Ekle</button>
     </form>
-
     <!-- Görev listesi -->
     <ul>
         <?php foreach ($todos as $todo): ?>
-        <li>
-            <?php echo htmlspecialchars($todo['title']); ?>
+        <li style="list-style-type: none;">
+            <?php echo htmlspecialchars($todo['title']); ?> -
             <?php
-                $status = isset($todo['is_completed']) && $todo['is_completed'] ? 'Tamamlandı' : 'Bekliyor...';
-                echo $status;
+                switch ($todo['status']) {
+                    case 'completed':
+                        echo 'Tamamlandı';
+                        break;
+                    case 'in_progress':
+                        echo 'Devam ediyor';
+                        break;
+                    case 'cancelled':
+                        echo 'İptal edildi';
+                        break;
+                    default:
+                        echo 'Bekliyor...';
+                }
                 ?>
+
+            <?php if ($todo['status'] !== 'completed'): ?>
+            <form action="update.php" method="post" style="display:inline;">
+                <input type="hidden" name="id" value="<?php echo $todo['id']; ?>">
+                <button type="submit">Tamamla</button>
+            </form>
+            <?php endif; ?>
         </li>
         <?php endforeach; ?>
     </ul>
+
 </body>
 
 </html>

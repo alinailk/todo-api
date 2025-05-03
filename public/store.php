@@ -13,7 +13,7 @@ if (!empty($title)) {
     $model->createTodo($title); // Veritabanına ekler.
 }
 
-// İşlem bitince anasayfaya yönlendir
+// İşlem bitince anasayfaya yönlendir.
 header("Location: index.php");
 exit;
 

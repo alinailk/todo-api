@@ -23,6 +23,16 @@ class TodoModel
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute(['title' => $title]);
     }
+
+    public function updateStatus($id, $status)
+    {
+        $stmt = $this->pdo->prepare("UPDATE todos SET status = :status WHERE id = :id");
+        $stmt->execute([
+            'status' => $status,
+            'id' => $id
+        ]);
+    }
+
 }
 
 ?>
