@@ -23,12 +23,10 @@ if (
     isset($data['due_date']) &&
     isset($data['priority'])
 ) {
-    $result = $model->createTodo(
-        $data['title'],
-        $data['description'],
-        $data['due_date'],
-        $data['priority']
-    );
+    // Varsayılan status değerini ekle
+    $data['status'] = 'pending';
+    
+    $result = $model->createTodo($data);
     
     if ($result) {
         echo json_encode(['success' => true, 'message' => 'Görev başarıyla eklendi.']);

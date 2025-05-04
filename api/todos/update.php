@@ -35,13 +35,7 @@ try {
     }
 
     // Güncelleme işlemi.
-    $success = $model->updateTodo(
-        $data['id'],
-        $data['title'],
-        $data['description'],
-        $data['due_date'],
-        $data['status'] ?? 'pending'
-    );
+    $success = $model->updateTodo($data);
 
     if ($success) {
         echo json_encode(['success' => true, 'message' => 'Görev güncellendi']);

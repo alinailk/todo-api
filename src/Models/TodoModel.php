@@ -1,138 +1,139 @@
 <?php
-class TodoModel
-{
-    private $pdo;
+class TodoModel {
+    private $conn;
+    private $table_name = "todos";
 
-    public function __construct($pdo)
-    {
-        $this->pdo = $pdo;
+    public function __construct($db) {
+        $this->conn = $db;
     }
 
-    // To do listeleme fonksiyonu.
-    public function getAllTodos()
-    {
-        // Silinmemiş ve tamamlanmamış (pending) görevleri getiriyoruz
-        $stmt = $this->pdo->prepare("SELECT * FROM todos WHERE deleted_at IS NULL");
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    // To do ekleme fonksiyonu.
-    public function createTodo($title, $description, $dueDate = null, $priority = 'medium')
-    {
+    public function getAllTodos($status = 'all') {
         try {
-            $sql = "INSERT INTO todos (title, description, due_date, status, priority) 
-                    VALUES (:title, :description, :due_date, 'pending', :priority)";
-            $stmt = $this->pdo->prepare($sql);
-            $result = $stmt->execute([
-                'title' => $title,
-                'description' => $description,
-                'due_date' => $dueDate,
-                'priority' => $priority
-            ]);
+            $query = "SELECT * FROM " . $this->table_name;
+            
+            switch ($status) {
+                case 'active':
+                    $query .= " WHERE status = 'pending'";
+                    break;
+                case 'completed':
+                    $query .= " WHERE status = 'completed'";
+                    break;
+                case 'deleted':
+                    $query .= " WHERE status = 'deleted'";
+                    break;
+                default:
+                    $query .= " WHERE status != 'deleted'";
+            }
+            
+            $query .= " ORDER BY created_at DESC";
+            
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Database Error: " . $e->getMessage());
+            return false;
+        }
+    }
 
-            if ($result) {
+    public function createTodo($data) {
+        try {
+            $query = "INSERT INTO " . $this->table_name . "
+                    (title, description, due_date, priority, status)
+                    VALUES
+                    (:title, :description, :due_date, :priority, :status)";
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(":title", $data['title']);
+            $stmt->bindParam(":description", $data['description']);
+            $stmt->bindParam(":due_date", $data['due_date']);
+            $stmt->bindParam(":priority", $data['priority']);
+            $stmt->bindParam(":status", $data['status']);
+
+            if ($stmt->execute()) {
                 return true;
             }
             return false;
         } catch (PDOException $e) {
-            error_log("Görev ekleme hatası: " . $e->getMessage());
+            error_log("Database Error: " . $e->getMessage());
             return false;
         }
     }
+	
+	// Todo düzenleme fonksiyon kodu.
 
-    // To do durumunu güncelleme fonksiyonu.
-    public function updateStatus($id, $status)
-    {
-        try {
-            // Önce görevin var olup olmadığını kontrol et
-            $checkStmt = $this->pdo->prepare("SELECT id FROM todos WHERE id = :id AND deleted_at IS NULL");
-            $checkStmt->execute(['id' => $id]);
+    public function updateTodo($data) {
+    try {
+        $query = "UPDATE " . $this->table_name . "
+                SET
+                    title = :title,
+                    description = :description,
+                    due_date = :due_date,
+                    priority = :priority,
+                    status = :status
+                WHERE
+                    id = :id";
 
-            if ($checkStmt->rowCount() === 0) {
-                return false;
-            }
+        $stmt = $this->conn->prepare($query);
 
-            // Status'u güncelle
-            $stmt = $this->pdo->prepare("UPDATE todos SET status = :status WHERE id = :id");
-            $result = $stmt->execute([
-                'status' => $status,
-                'id' => $id
-            ]);
+        $stmt->bindParam(":id", $data['id']);
+        $stmt->bindParam(":title", $data['title']);
+        $stmt->bindParam(":description", $data['description']);
+        $stmt->bindParam(":due_date", $data['due_date']);
+        $stmt->bindParam(":priority", $data['priority']);
+        $stmt->bindParam(":status", $data['status']);
 
-            return $stmt->rowCount() > 0;
-        } catch (PDOException $e) {
-            error_log("Status güncelleme hatası: " . $e->getMessage());
-            return false;
+        if ($stmt->execute()) {
+            return true;
         }
-    }
-
-    // To do silme fonksiyonu.
-
-    public function deleteTodo($id)
-    {
-        try {
-            // Önce görevin var olup olmadığını kontrol et
-            $checkStmt = $this->pdo->prepare("SELECT id FROM todos WHERE id = :id AND deleted_at IS NULL");
-            $checkStmt->execute(['id' => $id]);
-
-            if ($checkStmt->rowCount() === 0) {
-                return false;
-            }
-
-            // Görevi soft delete yap
-            $stmt = $this->pdo->prepare("UPDATE todos SET deleted_at = NOW() WHERE id = :id");
-            $result = $stmt->execute(['id' => $id]);
-
-            return $stmt->rowCount() > 0;
-        } catch (PDOException $e) {
-            error_log("Silme hatası: " . $e->getMessage());
-            return false;
-        }
-    }
-
-
-    // Görev ID'sine göre verileri al.
-    public function getTodoById($id)
-    {
-        $stmt = $this->pdo->prepare("SELECT * FROM todos WHERE id = :id");
-        $stmt->execute(['id' => $id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-    // To do güncelleme fonksiyonu (Başlık, Açıklama, Bitiş Tarihi ve Durum).
-    public function updateTodo($id, $title, $description, $dueDate, $status)
-    {
-        try {
-            $stmt = $this->pdo->prepare("
-            UPDATE todos 
-            SET title = :title, 
-                description = :description, 
-                due_date = :due_date, 
-                status = :status 
-            WHERE id = :id
-        ");
-
-            $result = $stmt->execute([
-                'id' => $id,
-                'title' => $title,
-                'description' => $description,
-                'due_date' => $dueDate,
-                'status' => $status
-            ]);
-
-            return $stmt->rowCount() > 0;
-        } catch (PDOException $e) {
-            error_log("Güncelleme hatası: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    // Silme işleminde tarihi tutar.
-    public function softDeleteTodo($id)
-    {
-        $stmt = $this->pdo->prepare("UPDATE todos SET deleted_at = NOW() WHERE id = :id");
-        $stmt->execute(['id' => $id]);
+        return false;
+    } catch (PDOException $e) {
+        error_log("Database Error: " . $e->getMessage());
+        return false;
     }
 }
+
+    public function updateStatus($id, $status) {
+        try {
+            $query = "UPDATE " . $this->table_name . "
+                    SET status = :status
+                    WHERE id = :id";
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(":id", $id);
+            $stmt->bindParam(":status", $status);
+
+            if ($stmt->execute()) {
+                return true;
+            }
+            return false;
+        } catch (PDOException $e) {
+            error_log("Database Error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function deleteTodo($id) {
+        try {
+            $query = "UPDATE " . $this->table_name . "
+                    SET status = 'deleted', deleted_at = CURRENT_TIMESTAMP
+                    WHERE id = :id";
+
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(":id", $id);
+
+            if ($stmt->execute()) {
+                return true;
+            }
+            return false;
+        } catch (PDOException $e) {
+            error_log("Database Error: " . $e->getMessage());
+            return false;
+        }
+    }
+}
+
 ?>
