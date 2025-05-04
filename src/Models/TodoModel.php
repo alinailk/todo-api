@@ -18,42 +18,77 @@ class TodoModel
     }
 
     // To do ekleme fonksiyonu.
+
     public function createTodo($title, $description, $dueDate = null)
     {
-        $sql = "INSERT INTO todos (title, description, due_date) VALUES (:title, :description, :due_date)";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            'title' => $title,
-            'description' => $description,
-            'due_date' => $dueDate
-        ]);
-    }
-
-    // To do durumunu güncelleme fonksiyonu.
-    public function updateStatus($id, $status)
-    {
-        // Görev verilerini ID'ye göre alıyoruz
-        $stmt = $this->pdo->prepare("SELECT title, description FROM todos WHERE id = :id");
-        $stmt->execute(['id' => $id]);
-        $todo = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        // Başlık ve açıklama mevcutsa, görev durumunu güncelliyoruz
-        if ($todo) {
-            $stmt = $this->pdo->prepare("UPDATE todos SET status = :status WHERE id = :id");
-            $stmt->execute([
-                'status' => $status,
-                'id' => $id
+        try {
+            $sql = "INSERT INTO todos (title, description, due_date, status) VALUES (:title, :description, :due_date, 'pending')";
+            $stmt = $this->pdo->prepare($sql);
+            $result = $stmt->execute([
+                'title' => $title,
+                'description' => $description,
+                'due_date' => $dueDate
             ]);
+            
+            if ($result) {
+                return true;
+            }
+            return false;
+        } catch (PDOException $e) {
+            error_log("Görev ekleme hatası: " . $e->getMessage());
+            return false;
         }
     }
 
+    // To do durumunu güncelleme fonksiyonu.
+   public function updateStatus($id, $status)
+{
+    try {
+        // Önce görevin var olup olmadığını kontrol et
+        $checkStmt = $this->pdo->prepare("SELECT id FROM todos WHERE id = :id AND deleted_at IS NULL");
+        $checkStmt->execute(['id' => $id]);
+        
+        if ($checkStmt->rowCount() === 0) {
+            return false;
+        }
+
+        // Status'u güncelle
+        $stmt = $this->pdo->prepare("UPDATE todos SET status = :status WHERE id = :id");
+        $result = $stmt->execute([
+            'status' => $status,
+            'id' => $id
+        ]);
+        
+        return $stmt->rowCount() > 0;
+    } catch (PDOException $e) {
+        error_log("Status güncelleme hatası: " . $e->getMessage());
+        return false;
+    }
+}
+
     // To do silme fonksiyonu.
 
-    public function deleteTodo($id)
-    {
+	public function deleteTodo($id)
+{
+    try {
+        // Önce görevin var olup olmadığını kontrol et
+        $checkStmt = $this->pdo->prepare("SELECT id FROM todos WHERE id = :id AND deleted_at IS NULL");
+        $checkStmt->execute(['id' => $id]);
+        
+        if ($checkStmt->rowCount() === 0) {
+            return false;
+        }
+
+        // Görevi soft delete yap
         $stmt = $this->pdo->prepare("UPDATE todos SET deleted_at = NOW() WHERE id = :id");
-        $stmt->execute(['id' => $id]);
+        $result = $stmt->execute(['id' => $id]);
+        
+        return $stmt->rowCount() > 0;
+    } catch (PDOException $e) {
+        error_log("Silme hatası: " . $e->getMessage());
+        return false;
     }
+}
 
 
     // Görev ID'sine göre verileri al.
@@ -65,17 +100,32 @@ class TodoModel
     }
 
     // To do güncelleme fonksiyonu (Başlık, Açıklama, Bitiş Tarihi ve Durum).
-    public function updateTodo($id, $title, $description, $dueDate, $status)
-    {
-        $stmt = $this->pdo->prepare("UPDATE todos SET title = :title, description = :description, due_date = :due_date, status = :status WHERE id = :id");
-        $stmt->execute([
+   public function updateTodo($id, $title, $description, $dueDate, $status)
+{
+    try {
+        $stmt = $this->pdo->prepare("
+            UPDATE todos 
+            SET title = :title, 
+                description = :description, 
+                due_date = :due_date, 
+                status = :status 
+            WHERE id = :id
+        ");
+
+        $result = $stmt->execute([
+            'id' => $id,
             'title' => $title,
             'description' => $description,
             'due_date' => $dueDate,
-            'status' => $status,
-            'id' => $id
+            'status' => $status
         ]);
+
+        return $stmt->rowCount() > 0;
+    } catch (PDOException $e) {
+        error_log("Güncelleme hatası: " . $e->getMessage());
+        return false;
     }
+}
 
 
 

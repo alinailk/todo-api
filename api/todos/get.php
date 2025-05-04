@@ -1,5 +1,4 @@
 <?php
-
 // Veritabanı ve model dosyalarını doğru yerden çağır.
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../src/Models/TodoModel.php';
@@ -15,3 +14,4 @@ $todos = $model->getAllTodos();
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *'); // React için gerekli
 echo json_encode($todos);
+?>

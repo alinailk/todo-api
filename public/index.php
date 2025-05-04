@@ -69,6 +69,7 @@ $statusTranslations = [
                 <?php if ($todo['status'] !== 'completed'): ?>
                     <form action="update.php" method="POST" style="display:inline;">
                         <input type="hidden" name="id" value="<?php echo $todo['id']; ?>">
+                        <input type="hidden" name="status" value="completed">
                         <button type="submit">Tamamlandı</button>
                     </form>
                 <?php endif; ?>
