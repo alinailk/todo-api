@@ -1,17 +1,17 @@
 <?php
 
-// Gerekli dosyaları dahil et
+// Veritabanı ve model dosyalarını doğru yerden çağır.
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../src/Models/TodoModel.php';
 
-// CORS ve JSON header'ları ayarla
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-
+// Veritabanı bağlantısını oluştur.
+$pdo = Database::connect();
 $model = new TodoModel($pdo);
 
-// Veritabanından görevleri al
+// Tüm görevleri getir.
 $todos = $model->getAllTodos();
 
-// JSON çıktısı olarak gönder
+// JSON olarak yanıtla.
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *'); // React için gerekli
 echo json_encode($todos);
