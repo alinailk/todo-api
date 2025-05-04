@@ -1,24 +1,35 @@
 <?php
 
-// Gerekli dosyaların içe aktarımı.
-require_once __DIR__ . '/../../config/database.php';
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Methods: POST");
+
+// Gerekli dosyaları dahil et
+require_once __DIR__ . '/../../Config/Database.php';
 require_once __DIR__ . '/../../src/Models/TodoModel.php';
 
-header("Content-Type: application/json");
+// Veritabanı bağlantısını oluşturur.
+$db = new Database();
+$pdo = $db->connect();
+
+// Modeli başlatır.
+$model = new TodoModel($pdo);
 
 $data = json_decode(file_get_contents("php://input"), true);
 
-if (!$data || !isset($data['title'])) {
-    http_response_code(400);
-    echo json_encode(["error" => "Eksik veri"]);
-    exit;
+if (
+    isset($data['title']) &&
+    isset($data['description']) &&
+    isset($data['due_date'])
+) {
+    $model->createTodo(
+        $data['title'],
+        $data['description'],
+        $data['due_date']
+    );
+    echo json_encode(['success' => true, 'message' => 'Görev eklendi.']);
+} else {
+    echo json_encode(['success' => false, 'message' => 'Eksik veri.']);
 }
 
-$title = $data['title'];
-$description = $data['description'] ?? null;
-$due_date = $data['due_date'] ?? null;
-
-$model = new TodoModel($pdo);
-$model->createTodo($title, $description, $due_date);
-
-echo json_encode(["message" => "Görev başarıyla eklendi"]);
+?>
