@@ -8,38 +8,35 @@ header("Access-Control-Allow-Methods: POST");
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../src/Models/TodoModel.php';
 
-try {
-    // Veritabanı bağlantısını oluşturur.
-    $db = new Database();
-    $pdo = $db->connect();
+// Veritabanı bağlantısını oluşturur.
+$db = new Database();
+$pdo = $db->connect();
 
-    // Modeli başlatır.
-    $model = new TodoModel($pdo);
+// Modeli başlatır.
+$model = new TodoModel($pdo);
 
-    $data = json_decode(file_get_contents("php://input"), true);
+$data = json_decode(file_get_contents("php://input"), true);
 
-    if (
-        isset($data['title']) &&
-        isset($data['description']) &&
-        isset($data['due_date'])
-    ) {
-        $result = $model->createTodo(
-            $data['title'],
-            $data['description'],
-            $data['due_date']
-        );
-
-        if ($result) {
-            echo json_encode(['success' => true, 'message' => 'Görev başarıyla eklendi.']);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Görev eklenirken bir hata oluştu.']);
-        }
+if (
+    isset($data['title']) &&
+    isset($data['description']) &&
+    isset($data['due_date']) &&
+    isset($data['priority'])
+) {
+    $result = $model->createTodo(
+        $data['title'],
+        $data['description'],
+        $data['due_date'],
+        $data['priority']
+    );
+    
+    if ($result) {
+        echo json_encode(['success' => true, 'message' => 'Görev başarıyla eklendi.']);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Eksik veri.']);
+        echo json_encode(['success' => false, 'message' => 'Görev eklenirken bir hata oluştu.']);
     }
-} catch (Exception $e) {
-    error_log("Hata: " . $e->getMessage());
-    echo json_encode(['success' => false, 'message' => 'Bir hata oluştu: ' . $e->getMessage()]);
+} else {
+    echo json_encode(['success' => false, 'message' => 'Eksik veri.']);
 }
 
 ?>
