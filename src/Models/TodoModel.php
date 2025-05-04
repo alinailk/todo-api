@@ -11,7 +11,7 @@ class TodoModel
     // To do listeleme fonksiyonu.
     public function getAllTodos()
     {
-        // Silinmemiş görevleri döndürür.
+        // Silinmemiş ve tamamlanmamış (pending) görevleri getiriyoruz
         $stmt = $this->pdo->prepare("SELECT * FROM todos WHERE deleted_at IS NULL");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -46,7 +46,6 @@ class TodoModel
             ]);
         }
     }
-
 
     // To do silme fonksiyonu.
 
