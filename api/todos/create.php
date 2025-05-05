@@ -15,7 +15,7 @@ require_once __DIR__ . '/../../src/Models/TodoModel.php';
 $db = new Database();
 $pdo = $db->getConnection(); // Veritabanı bağlantısını al
 
-// Bağlantıyı kontrol et
+// Bağlantıyı kontrol etmek için.
 if (!$pdo) {
     echo json_encode(['success' => false, 'message' => 'Veritabanına bağlanılamadı.']);
     exit;
@@ -24,20 +24,20 @@ if (!$pdo) {
 // Modeli başlatır.
 $model = new TodoModel($pdo);
 
-// Gelen JSON verisini al
+// Gelen JSON verisini alır.
 $data = json_decode(file_get_contents("php://input"), true);
 
-// Gelen verilerin doğruluğunu kontrol et
+// Gelen verilerin doğruluğunu kontrol eder.
 if (
     isset($data['title']) &&
     isset($data['description']) &&
     isset($data['due_date']) &&
     isset($data['priority'])
 ) {
-    // Varsayılan status değerini ekle
+    // Varsayılan status değerini ekler.
     $data['status'] = 'pending';
 
-    // Yeni görevi veritabanına ekle
+    // Yeni görevi veritabanına ekler.
     $result = $model->createTodo($data);
 
     if ($result) {

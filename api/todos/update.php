@@ -18,12 +18,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 try {
     // Veritabanı bağlantısı
     $database = new Database();
-    $pdo = $database->getConnection();  // Burada getConnection() metodunu kullanıyoruz
+    $pdo = $database->getConnection();
     $model = new TodoModel($pdo);
 
     // JSON veri alma
     $input = file_get_contents('php://input');
-    error_log("Gelen veri: " . $input); // Debug log
+    error_log("Gelen veri: " . $input);
 
     $data = json_decode($input, true);
 

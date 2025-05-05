@@ -9,6 +9,7 @@ class TodoModel
         $this->conn = $db;
     }
 
+    // Tüm todoları listelemek için.
     public function getAllTodos($status = 'all')
     {
         try {
@@ -35,11 +36,12 @@ class TodoModel
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Database Error: " . $e->getMessage());
+            error_log("Veritabanı hatası: " . $e->getMessage());
             return false;
         }
     }
 
+    // To do ekleme işlemi için.
     public function createTodo($data)
     {
         try {
@@ -69,15 +71,12 @@ class TodoModel
 
             return false;
         } catch (PDOException $e) {
-            error_log("Database Error: " . $e->getMessage());
+            error_log("Veritabanı hatası: " . $e->getMessage());
             return false;
         }
     }
 
-
-
-    // Todo düzenleme fonksiyon kodu.
-
+    // To do düzenleme fonksiyon kodu.
     public function updateTodo($data)
     {
         try {
@@ -105,11 +104,12 @@ class TodoModel
             }
             return false;
         } catch (PDOException $e) {
-            error_log("Database Error: " . $e->getMessage());
+            error_log("Veritabanı hatası: " . $e->getMessage());
             return false;
         }
     }
 
+    // To do tamamlandı işaretlenmesi için.
     public function updateStatus($id, $status)
     {
         try {
@@ -127,11 +127,12 @@ class TodoModel
             }
             return false;
         } catch (PDOException $e) {
-            error_log("Database Error: " . $e->getMessage());
+            error_log("Veritabanı hatası: " . $e->getMessage());
             return false;
         }
     }
 
+    // To do silme işlemi için.
     public function deleteTodo($id)
     {
         try {
@@ -147,11 +148,12 @@ class TodoModel
             }
             return false;
         } catch (PDOException $e) {
-            error_log("Database Error: " . $e->getMessage());
+            error_log("Veritabanı hatası: " . $e->getMessage());
             return false;
         }
     }
 
+    // 
     public function getTodoById($id)
     {
         try {
@@ -162,7 +164,7 @@ class TodoModel
 
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Database Error: " . $e->getMessage());
+            error_log("Veritabanı hatası: " . $e->getMessage());
             return false;
         }
     }

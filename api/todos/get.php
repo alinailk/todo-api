@@ -16,7 +16,7 @@ require_once __DIR__ . '/../../src/Models/TodoModel.php';
 try {
     // Veritabanına bağlan
     $db = new Database();
-    $pdo = $db->getConnection(); // ← HATA BURADAYDI, düzeltildi
+    $pdo = $db->getConnection();
 
     if (!$pdo) {
         http_response_code(500);

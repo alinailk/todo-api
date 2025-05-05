@@ -22,7 +22,7 @@ try {
 
     // JSON verisini al ve kontrol et
     $input = file_get_contents("php://input");
-    error_log("Gelen veri: " . $input); // Debug log
+    error_log("Gelen veri: " . $input);
 
     $data = json_decode($input);
 
@@ -38,7 +38,7 @@ try {
         exit;
     }
 
-    // ID'nin sayı olduğundan emin ol
+    // ID'nin sayı olduğundan emin olmak için.
     if (!is_numeric($data->id)) {
         echo json_encode([
             "success" => false,
@@ -47,7 +47,7 @@ try {
         exit;
     }
 
-    // Silme işlemini gerçekleştir
+    // Silme işlemini gerçekleştir.
     $success = $model->deleteTodo($data->id);
 
     if ($success) {
