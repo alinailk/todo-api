@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 try {
     $database = new Database();
-    $db = $database->connect();
+    $db = $database->getConnection();
     $model = new TodoModel($db);
 
     // JSON verisini al
@@ -26,7 +26,7 @@ try {
     error_log("Gelen veri: " . $input); // Debug log
 
     $data = json_decode($input);
-    
+
     if (json_last_error() !== JSON_ERROR_NONE) {
         throw new Exception("Geçersiz JSON formatı");
     }

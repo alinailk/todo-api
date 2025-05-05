@@ -87,8 +87,10 @@ class TodoController
 }
 
 // 4. Standart API yanıt formatı
-class ApiResponse {
-    public static function success($data, $message = null, $meta = null) {
+class ApiResponse
+{
+    public static function success($data, $message = null, $meta = null)
+    {
         return [
             'status' => 'success',
             'message' => $message,
@@ -96,8 +98,9 @@ class ApiResponse {
             'meta' => $meta
         ];
     }
-    
-    public static function error($message, $errors = null) {
+
+    public static function error($message, $errors = null)
+    {
         return [
             'status' => 'error',
             'message' => $message,

@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 try {
     $database = new Database();
-    $db = $database->connect();
+    $db = $database->getConnection();
     $model = new TodoModel($db);
 
     // JSON verisini al ve kontrol et
@@ -25,14 +25,14 @@ try {
     error_log("Gelen veri: " . $input); // Debug log
 
     $data = json_decode($input);
-    
+
     if (json_last_error() !== JSON_ERROR_NONE) {
         throw new Exception("Geçersiz JSON formatı");
     }
 
     if (!isset($data->id)) {
         echo json_encode([
-            "success" => false, 
+            "success" => false,
             "message" => "ID eksik."
         ]);
         exit;
@@ -41,7 +41,7 @@ try {
     // ID'nin sayı olduğundan emin ol
     if (!is_numeric($data->id)) {
         echo json_encode([
-            "success" => false, 
+            "success" => false,
             "message" => "Geçersiz ID formatı."
         ]);
         exit;
@@ -52,12 +52,12 @@ try {
 
     if ($success) {
         echo json_encode([
-            "success" => true, 
+            "success" => true,
             "message" => "Görev başarıyla silindi."
         ]);
     } else {
         echo json_encode([
-            "success" => false, 
+            "success" => false,
             "message" => "Görev bulunamadı veya silinemedi."
         ]);
     }

@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: Content-Type");
@@ -10,20 +13,21 @@ require_once __DIR__ . '/../../src/Models/TodoModel.php';
 
 // Veritabanı bağlantısını oluşturur.
 $db = new Database();
-$pdo = $db->connect();
+$pdo = $db->getConnection(); // Veritabanı bağlantısını al
 
-	// Veritabanı bağlantı kontrolü.
-	if (!$pdo) {
+// Bağlantıyı kontrol et
+if (!$pdo) {
     echo json_encode(['success' => false, 'message' => 'Veritabanına bağlanılamadı.']);
     exit;
-	}
-
+}
 
 // Modeli başlatır.
 $model = new TodoModel($pdo);
 
+// Gelen JSON verisini al
 $data = json_decode(file_get_contents("php://input"), true);
 
+// Gelen verilerin doğruluğunu kontrol et
 if (
     isset($data['title']) &&
     isset($data['description']) &&
@@ -32,9 +36,10 @@ if (
 ) {
     // Varsayılan status değerini ekle
     $data['status'] = 'pending';
-    
+
+    // Yeni görevi veritabanına ekle
     $result = $model->createTodo($data);
-    
+
     if ($result) {
         echo json_encode(['success' => true, 'message' => 'Görev başarıyla eklendi.']);
     } else {
@@ -43,5 +48,4 @@ if (
 } else {
     echo json_encode(['success' => false, 'message' => 'Eksik veri.']);
 }
-
 ?>

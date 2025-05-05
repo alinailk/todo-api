@@ -37,30 +37,40 @@ class TodoModel {
         }
     }
 
-    public function createTodo($data) {
-        try {
-            $query = "INSERT INTO " . $this->table_name . "
-                    (title, description, due_date, priority, status)
-                    VALUES
-                    (:title, :description, :due_date, :priority, :status)";
+ public function createTodo($data) {
+    try {
+        $query = "INSERT INTO " . $this->table_name . "
+                (title, description, due_date, priority, status)
+                VALUES
+                (:title, :description, :due_date, :priority, :status)";
 
-            $stmt = $this->conn->prepare($query);
+        $stmt = $this->conn->prepare($query);
 
-            $stmt->bindParam(":title", $data['title']);
-            $stmt->bindParam(":description", $data['description']);
-            $stmt->bindParam(":due_date", $data['due_date']);
-            $stmt->bindParam(":priority", $data['priority']);
-            $stmt->bindParam(":status", $data['status']);
+        $stmt->bindParam(":title", $data['title']);
+        $stmt->bindParam(":description", $data['description']);
+        $stmt->bindParam(":due_date", $data['due_date']);
+        $stmt->bindParam(":priority", $data['priority']);
+        $stmt->bindParam(":status", $data['status']);
 
-            if ($stmt->execute()) {
-                return true;
-            }
-            return false;
-        } catch (PDOException $e) {
-            error_log("Database Error: " . $e->getMessage());
-            return false;
+        if ($stmt->execute()) {
+            $lastId = $this->conn->lastInsertId();
+
+            // Yeni eklenen görevi geri döndür
+            $selectStmt = $this->conn->prepare("SELECT * FROM " . $this->table_name . " WHERE id = :id");
+            $selectStmt->bindParam(":id", $lastId);
+            $selectStmt->execute();
+
+            return $selectStmt->fetch(PDO::FETCH_ASSOC);
         }
+
+        return false;
+    } catch (PDOException $e) {
+        error_log("Database Error: " . $e->getMessage());
+        return false;
     }
+}
+
+
 	
 	// Todo düzenleme fonksiyon kodu.
 
