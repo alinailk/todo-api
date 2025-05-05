@@ -1,24 +1,22 @@
 <?php
+require_once '../config/database.php';
+require_once '../src/Models/TodoModel.php';
 
-// Veritabanı bağlantısı ve model dosyasının dahil edilmesi.
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../src/Models/TodoModel.php';
+if (isset($_GET['id'])) {
+    $database = new Database();
+    $db = $database->getConnection();
+    $todoModel = new TodoModel($db);
 
-// Veritabanı bağlantısını sağlar.
-$pdo = Database::connect();
+    $id = $_GET['id'];
 
-// ID parametresini al
-$id = $_GET['id'] ?? null;
-
-// Eğer ID geçerli ise
-if ($id) {
-    // TodoModel sınıfından nesne oluştur
-    $model = new TodoModel($pdo);
-    // Görevi sil
-    $model->deleteTodo($id);
+    if ($todoModel->deleteTodo($id)) {
+        header('Location: index.php');
+        exit;
+    } else {
+        echo "Görev silinirken bir hata oluştu";
+    }
+} else {
+    header('Location: index.php');
+    exit;
 }
-
-// Silme işlemi sonrası index sayfasına yönlendir
-header('Location: index.php');
-exit;
 ?>

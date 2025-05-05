@@ -1,34 +1,38 @@
 <?php
 
 // Veritabanı bağlantısı ve model dosyasının dahil edilmesi
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../src/Models/TodoModel.php';
+require_once '../config/database.php';
+require_once '../src/Models/TodoModel.php';
+require_once '../src/Http/Request.php';
+
+use App\Http\Request;
 
 // Veritabanı bağlantısını başlatıyoruz
-$pdo = Database::connect();
+$database = new Database();
+$db = $database->getConnection();
+$todoModel = new TodoModel($db);
 
 // POST isteği geldiğinde çalışacak
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = $_POST['id'] ?? null;
 
     if ($id) {
-        $model = new TodoModel($pdo);
-
         // Eğer sadece durum güncellemesi yapılıyorsa (Tamamlandı butonu için)
-        if (isset($_POST['status']) && !isset($_POST['title'])) {
-            $model->updateStatus($id, 'completed');
+        if (isset($_POST['id']) && !isset($_POST['title'])) {
+            $todoModel->updateStatus($id, 'completed');
         }
         // Eğer görev içeriği güncelleniyorsa
         else if (isset($_POST['title'])) {
-            $title = $_POST['title'] ?? '';
-            $description = $_POST['description'] ?? '';
-            $dueDate = $_POST['due_date'] ?? null;
+            $data = [
+                'id' => $id,
+                'title' => $_POST['title'] ?? '',
+                'description' => $_POST['description'] ?? '',
+                'due_date' => $_POST['due_date'] ?? null,
+                'priority' => $_POST['priority'] ?? 'medium',
+                'status' => $_POST['status'] ?? 'pending'
+            ];
 
-            // Mevcut görevin durumunu al
-            $currentTodo = $model->getTodoById($id);
-            $currentStatus = $currentTodo['status'] ?? 'pending';
-
-            $model->updateTodo($id, $title, $description, $dueDate, $currentStatus);
+            $todoModel->updateTodo($data);
         }
     }
 }
@@ -49,7 +53,17 @@ class TodoRepository
 
     public function findAll($page = 1, $limit = 10, $sort = 'created_at', $order = 'desc')
     {
-        // Sayfalama ve sıralama ile todo'ları getir
+        $offset = ($page - 1) * $limit;
+
+        $sql = "SELECT * FROM todos ORDER BY {$sort} {$order} LIMIT :limit OFFSET :offset";
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 
@@ -66,6 +80,16 @@ class TodoService
     public function createTodo(array $data)
     {
         // İş mantığı ve validasyon
+    }
+
+    public function getAllTodos(array $params = [])
+    {
+        $page = $params['page'] ?? 1;
+        $limit = $params['limit'] ?? 10;
+        $sort = $params['sort'] ?? 'created_at';
+        $order = $params['order'] ?? 'desc';
+
+        return $this->repository->findAll($page, $limit, $sort, $order);
     }
 }
 
