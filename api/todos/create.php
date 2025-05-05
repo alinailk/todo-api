@@ -12,6 +12,13 @@ require_once __DIR__ . '/../../src/Models/TodoModel.php';
 $db = new Database();
 $pdo = $db->connect();
 
+	// Veritabanı bağlantı kontrolü.
+	if (!$pdo) {
+    echo json_encode(['success' => false, 'message' => 'Veritabanına bağlanılamadı.']);
+    exit;
+	}
+
+
 // Modeli başlatır.
 $model = new TodoModel($pdo);
 
