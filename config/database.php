@@ -5,7 +5,7 @@ class Database
     private $db_name = "todo_app";  // Veritabanı adı
     private $username = "root";      // Kullanıcı adı
     private $password = "";          // Şifre
-    public $conn;
+    public $conn; // Veritabanı bağlantı objesinin tutulduğu değişken.
 
     // Veritabanı bağlantısını oluştur
     public function getConnection()
@@ -31,7 +31,7 @@ class Database
 
             // Bağlantıyı test et
             $this->conn->query("SELECT 1");
-            
+
             return $this->conn;
 
         } catch (PDOException $e) {

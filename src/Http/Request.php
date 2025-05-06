@@ -11,6 +11,7 @@ class Request
         $this->data = array_merge($_GET, $_POST);
     }
 
+    //  Bu metod sınıfın içindeki tüm veriyi döndürür. 
     public function all()
     {
         return $this->data;
