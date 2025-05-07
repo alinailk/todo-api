@@ -4,6 +4,7 @@ Bu repo, React tabanlı bir todo uygulaması için geliştirilmiş saf PHP ve RE
 
 📂 Projenin Klasör Yapısı
 
+```plaintext
 📁 todo-api/
     📁 api/                        → API işlemlerinin yer aldığı klasör
         📁 todos/                  → Todo işlemleri için PHP dosyaları
@@ -12,10 +13,10 @@ Bu repo, React tabanlı bir todo uygulaması için geliştirilmiş saf PHP ve RE
             📄 delete.php          → Todo silmek için API dosyası
             📄 update.php          → Todo içeriğini güncellemek için API dosyası
             📄 updateStatus.php    → Todo durumunu güncellemek için API dosyası
-			
+
     📁 config/                     → Konfigürasyon dosyaları
         📄 database.php            → Veritabanı bağlantı dosyası
-		
+
     📁 public/                     → Public klasörü (web'e açık dosyalar)
         📄 create.php              → Todo eklemek için kullanıcı arayüzü içeren PHP dosyası
         📄 delete.php              → Todo silmek için kullanıcı arayüzü içeren PHP dosyası
@@ -23,14 +24,14 @@ Bu repo, React tabanlı bir todo uygulaması için geliştirilmiş saf PHP ve RE
         📄 index.php               → Ana sayfa
         📄 store.php               → Todo ekleme işlemi için veri gönderimi
         📄 update.php              → Todo güncelleme işlemi için kullanıcı arayüzü içeren PHP dosyası
-		
+
     📁 src/                        → Uygulamanın kaynak kodları
         📁 Http/                   → HTTP ile ilgili sınıflar
             📄 Request.php         → HTTP isteklerini yöneten sınıf
-			
+
         📁 Models/                 → Veritabanı ile etkileşimde kullanılan modeller
             📄 TodoModel.php       → Todo verilerini yöneten model
-
+```
 
 ⚙️ Kullanılan Teknolojiler
 
