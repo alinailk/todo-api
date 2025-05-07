@@ -70,6 +70,6 @@ CREATE TABLE tasks (
 
 4. database.php dosyasında veritabanı adı ve şifre bilgilerini kendi ortamınıza göre düzenleyin.
 
-** API Dökümantasyonu:
+*** API Dökümantasyonu:
 
 API uç noktaları için todo-api/api/todos/README.md dosyasına göz atabilirsiniz.
