@@ -2,13 +2,13 @@
 
 namespace App\Http;
 
-class Request
+class Request // Bu sınıf gelen HTTP istek verilerini işlemek için kullanılır.
 {
-    private $data;
+    private $data; // GET ve POST dizilerinin birleştirilmiş halini tutacaktır
 
     public function __construct()
     {
-        $this->data = array_merge($_GET, $_POST);
+        $this->data = array_merge($_GET, $_POST); // GET ve POST birleştirilir.
     }
 
     //  Bu metod sınıfın içindeki tüm veriyi döndürür. 

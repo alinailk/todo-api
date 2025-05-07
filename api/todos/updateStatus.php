@@ -5,10 +5,10 @@ require_once __DIR__ . '/../../Config/Database.php';
 require_once __DIR__ . '/../../src/Models/TodoModel.php';
 
 // CORS headers
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Origin: *"); // Herhangi bir kaynaktan gelen isteklere izin verir.
+header("Access-Control-Allow-Methods: POST, OPTIONS"); // API, POST ve OPTIONS metodlarını kabul eder.
+header("Access-Control-Allow-Headers: Content-Type"); // İsteklerde Content-Type başlığına izin verilir.
+header("Content-Type: application/json; charset=UTF-8"); // Yanıtın JSON formatında olduğu belirtilir.
 
 // OPTIONS isteğine boş yanıt ver ve çık
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -61,4 +61,5 @@ try {
         "message" => "Bir hata oluştu: " . $e->getMessage()
     ]);
 }
+
 ?>

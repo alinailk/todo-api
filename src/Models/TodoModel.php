@@ -1,8 +1,8 @@
 <?php
 class TodoModel
 {
-    private $conn;
-    private $table_name = "todos";
+    private $conn; // Veritabanı bağlantısını tutar.
+    private $table_name = "todos"; // Modelin bağlandığı tablonun adı.
 
     public function __construct($db)
     {
@@ -29,7 +29,7 @@ class TodoModel
                     $query .= " WHERE status != 'deleted'";
             }
 
-            $query .= " ORDER BY created_at DESC";
+            $query .= " ORDER BY created_at DESC"; // Sonuçlar oluşturulma tarihine göre azalan sırayla listelenir.
 
             $stmt = $this->conn->prepare($query);
             $stmt->execute();
@@ -51,7 +51,7 @@ class TodoModel
                 (:title, :description, :due_date, :priority, :status)";
 
             $stmt = $this->conn->prepare($query);
-
+            // prepare ve bindParam kullanılarak SQL sorgusunda parametreler yerine değerler bağlanır. SQL enjeksiyon saldırılarına karşı koruma sağlar.
             $stmt->bindParam(":title", $data['title']);
             $stmt->bindParam(":description", $data['description']);
             $stmt->bindParam(":due_date", $data['due_date']);
@@ -109,7 +109,7 @@ class TodoModel
         }
     }
 
-    // To do tamamlandı işaretlenmesi için.
+    // To do tamamlandı olması için.
     public function updateStatus($id, $status)
     {
         try {
@@ -153,7 +153,7 @@ class TodoModel
         }
     }
 
-    // 
+    // ID'ye göre todoları çekmek için.
     public function getTodoById($id)
     {
         try {

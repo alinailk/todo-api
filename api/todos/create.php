@@ -1,17 +1,19 @@
 <?php
+
+// Hata ayıklama kodları.
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Origin: *"); // Herhangi bir kaynaktan gelen isteklere izin verir.
+header("Access-Control-Allow-Headers: Content-Type"); // İsteklerde Content-Type başlığına izin verilir.
+header("Access-Control-Allow-Methods: POST"); // API yalnızca POST metoduyla istek alır.
 
 // Gerekli dosyaları dahil et
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../src/Models/TodoModel.php';
 
-// Veritabanı bağlantısını oluşturur.
+// Veritabanı bağlantısını oluşturur. (PDO ile)
 $db = new Database();
 $pdo = $db->getConnection(); // Veritabanı bağlantısını al
 
@@ -48,4 +50,5 @@ if (
 } else {
     echo json_encode(['success' => false, 'message' => 'Eksik veri.']);
 }
+
 ?>
