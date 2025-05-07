@@ -44,10 +44,12 @@ Bu repo, React tabanlı bir todo uygulaması için geliştirilmiş saf PHP ve RE
 
 🧪 API Uç Noktaları
 
-| GET    | "/todos/get.php"   | Tüm görevleri listeler |
-| POST   | "/todos/create.php"| Yeni görev ekler        |
-| POST   | "/todos/update.php"| Görev düzenler veya tamamlandı yapar |
-| POST   | "/todos/delete.php"| Görevi soft delete yapar |
+|--------|-----------------------|-----------------------------------------------|
+| GET    | /todos/get.php        | Tüm görevleri listeler                        |
+| POST   | /todos/create.php     | Yeni görev ekler                              |
+| POST   | /todos/update.php     | Görev düzenler veya tamamlandı yapar          |
+| POST   | /todos/delete.php     | Görevi soft delete yapar                      |
+
 
 🧰 Kurulum
 
