@@ -59,17 +59,7 @@ Bu repo, React tabanlı bir todo uygulaması için geliştirilmiş saf PHP ve RE
 
 ** SQL Tablo Oluşturma
 
-CREATE TABLE tasks (
-  	id INT AUTO_INCREMENT PRIMARY KEY,
-  	title VARCHAR(255) NOT NULL,
-  	description TEXT,
-  	status ENUM('pending', 'completed') DEFAULT 'pending',
-  	priority ENUM('low', 'medium', 'high') DEFAULT 'medium',
-  	due_date DATETIME,
-  	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  	deleted_at DATETIME DEFAULT NULL
-);
+<pre lang="markdown"><code>```sql CREATE TABLE todos ( id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL, description TEXT, status ENUM('pending', 'in_progress', 'completed') DEFAULT 'pending', priority ENUM('low', 'medium', 'high') DEFAULT 'medium', due_date DATETIME DEFAULT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, deleted_at DATETIME DEFAULT NULL ); ```</code></pre>
 
 4. database.php dosyasında veritabanı adı ve şifre bilgilerini kendi ortamınıza göre düzenleyin.
 
